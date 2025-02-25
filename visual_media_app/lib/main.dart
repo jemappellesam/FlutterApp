@@ -26,8 +26,9 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.amber),
           titleTextStyle: TextStyle(
             color: Colors.amber,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+            fontSize: 30,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.2, // Adicionando espaçamento nas letras
           ),
         ),
       ),
@@ -58,17 +59,32 @@ class StreamingHomePage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Banner de conteúdo em destaque
+          // Banner de conteúdo em destaque com efeito visual
           Container(
             height: 250,
-            color: Colors.black,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                  'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFeqJdje8V8uXkpL4AQsbcNO3317Yp1C_kB6rN2JOlIsEkHlMHRENiTiVAYA7T9QNXmpShKK0F9zvYdSf5AN9A0BLhyphenhyphenk_KWZFlqxmduiQWyIGDll7AbOBS6s16oOnuBSFuhFmO1PfbN3Wg/s1600/The+Rose.jpg',
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
             child: Center(
               child: Text(
                 'Em Destaque',
                 style: TextStyle(
                   color: Colors.amber,
-                  fontSize: 32,
+                  fontSize: 36,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 10.0,
+                      color: Colors.black.withOpacity(0.7),
+                      offset: Offset(3.0, 3.0),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -94,7 +110,20 @@ class StreamingHomePage extends StatelessWidget {
               children: [
                 MovieCard(
                   imageUrl:
-                  'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFeqJdje8V8uXkpL4AQsbcNO3317Yp1C_kB6rN2JOlIsEkHlMHRENiTiVAYA7T9QNXmpShKK0F9zvYdSf5AN9A0BLhyphenhyphenk_KWZFlqxmduiQWyIGDll7AbOBS6s16oOnuBSFuhFmO1PfbN3Wg/s1600/The+Rose.jpg',
+                      'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFeqJdje8V8uXkpL4AQsbcNO3317Yp1C_kB6rN2JOlIsEkHlMHRENiTiVAYA7T9QNXmpShKK0F9zvYdSf5AN9A0BLhyphenhyphenk_KWZFlqxmduiQWyIGDll7AbOBS6s16oOnuBSFuhFmO1PfbN3Wg/s1600/The+Rose.jpg',
+                  onTap: () {
+                    // Navegar para a página de detalhes do filme
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MovieDetailPage(),
+                      ),
+                    );
+                  },
+                ),
+                MovieCard(
+                  imageUrl:
+                      'https://upload.wikimedia.org/wikipedia/commons/a/a1/Movie_poster_example.jpg', // Exemplo de outro filme
                   onTap: () {
                     // Navegar para a página de detalhes do filme
                     Navigator.push(
@@ -127,11 +156,11 @@ class MovieCard extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
           child: Image.network(
             imageUrl,
-            width: 120,
-            height: 180,
+            width: 150,
+            height: 220,
             fit: BoxFit.cover,
           ),
         ),
