@@ -10,30 +10,143 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'blackroseFlix',
+      title: 'The Rosarium',
       theme: ThemeData(
-        primaryColor: Colors.black,
-        scaffoldBackgroundColor: Colors.black,
+        primaryColor: Color(0xFF1A237E), // Azul escuro
+        scaffoldBackgroundColor: Color(0xFF0D1B2A), // Fundo escuro
         textTheme: TextTheme(
           bodyLarge: TextStyle(color: Colors.white),
           bodyMedium: TextStyle(color: Colors.white70),
-        ),
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: Colors.amber, // Amarelo para detalhes
-        ),
-        appBarTheme: AppBarTheme(
-          color: Colors.black,
-          iconTheme: IconThemeData(color: Colors.amber),
-          titleTextStyle: TextStyle(
-            color: Colors.amber,
-            fontSize: 30,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.2, // Adicionando espaçamento nas letras
+          titleLarge: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: 'Times New Roman',
           ),
         ),
+        appBarTheme: AppBarTheme(
+          color: Colors.transparent, // Removido o fundo azul do AppBar
+          iconTheme: IconThemeData(color: Colors.white),
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+          ),
+          elevation: 0, // Remover a sombra do AppBar
+        ),
       ),
-      home: StreamingHomePage(),
+      home: ProfileSelectionPage(),
     );
+  }
+}
+
+class ProfileSelectionPage extends StatelessWidget {
+  const ProfileSelectionPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Gradiente de fundo com a forma de onda
+          Container(
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF1A237E), // Azul escuro
+                  Color(0xFF0D1B2A), // Roxo escuro
+                ],
+              ),
+            ),
+          ),
+          ClipPath(
+            clipper: WaveClipper(),
+            child: Container(
+              height: MediaQuery.of(context).size.height / 2,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF3F51B5), // Roxo mais claro
+                    Color(0xFF1A237E), // Azul escuro
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Título "Quem está assistindo?"
+                Text(
+                  "Quem está assistindo?",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 20),
+                // Lista de Perfis
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 1,
+                    ),
+                    itemCount: 6, // 6 perfis
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          // Navega para a próxima tela ao clicar no perfil
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StreamingHomePage(),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundImage: AssetImage('assets/images/blackrose_icon.jpg'),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              _getProfileName(index),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getProfileName(int index) {
+    List<String> profiles = ['Samuel', 'Yurik', 'Julio', 'Matheus', 'Bruno', 'Luiz'];
+    return profiles[index];
   }
 }
 
@@ -44,95 +157,108 @@ class StreamingHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("blackroseFlix"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.account_circle),
-            onPressed: () {},
-          ),
-        ],
+        title: Text("The Rosarium"),
+        leading: Icon(Icons.menu),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
-          // Banner de conteúdo em destaque com efeito visual
+          // Gradiente de fundo com a forma de onda
           Container(
-            height: 250,
+            height: MediaQuery.of(context).size.height,
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                  'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFeqJdje8V8uXkpL4AQsbcNO3317Yp1C_kB6rN2JOlIsEkHlMHRENiTiVAYA7T9QNXmpShKK0F9zvYdSf5AN9A0BLhyphenhyphenk_KWZFlqxmduiQWyIGDll7AbOBS6s16oOnuBSFuhFmO1PfbN3Wg/s1600/The+Rose.jpg',
-                ),
-                fit: BoxFit.cover,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF1A237E), // Azul escuro
+                  Color(0xFF0D1B2A), // Roxo escuro
+                ],
               ),
             ),
-            child: Center(
-              child: Text(
-                'Em Destaque',
-                style: TextStyle(
-                  color: Colors.amber,
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 10.0,
-                      color: Colors.black.withOpacity(0.7),
-                      offset: Offset(3.0, 3.0),
-                    ),
+          ),
+          ClipPath(
+            clipper: WaveClipper(),
+            child: Container(
+              height: MediaQuery.of(context).size.height / 2,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF3F51B5), // Roxo mais claro
+                    Color(0xFF1A237E), // Azul escuro
                   ],
                 ),
               ),
             ),
           ),
-          SizedBox(height: 20),
-
-          // Seção de filmes e séries em cartazes
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Filmes e Séries',
-              style: TextStyle(
-                color: Colors.amber,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(height: 10),
-          Expanded(
-            child: ListView(
-              scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MovieCard(
-                  imageUrl:
-                      'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFeqJdje8V8uXkpL4AQsbcNO3317Yp1C_kB6rN2JOlIsEkHlMHRENiTiVAYA7T9QNXmpShKK0F9zvYdSf5AN9A0BLhyphenhyphenk_KWZFlqxmduiQWyIGDll7AbOBS6s16oOnuBSFuhFmO1PfbN3Wg/s1600/The+Rose.jpg',
-                  onTap: () {
-                    // Navegar para a página de detalhes do filme
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MovieDetailPage(),
-                      ),
-                    );
-                  },
+                // Carrossel de Imagens
+                SizedBox(
+                  height: 250,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 5, // número de imagens no carrossel
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            'assets/images/blackrose_icon.jpg', // Imagem do asset
+                            width: 200,
+                            height: 250,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-                MovieCard(
-                  imageUrl:
-                      'https://upload.wikimedia.org/wikipedia/commons/a/a1/Movie_poster_example.jpg', // Exemplo de outro filme
-                  onTap: () {
-                    // Navegar para a página de detalhes do filme
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MovieDetailPage(),
+                SizedBox(height: 20),
+                // Título da seção alterado
+                Text(
+                  'Continue assistindo',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10),
+                // Lista horizontal de filmes e séries
+                Expanded(
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      MovieCard(
+                        imageUrl: 'assets/images/blackrose_icon.jpg',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MovieDetailPage(),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
+                      MovieCard(
+                        imageUrl: 'assets/images/blackrose_icon.jpg', // Outra imagem do asset
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MovieDetailPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -140,6 +266,25 @@ class StreamingHomePage extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class WaveClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.lineTo(0, 0);
+    path.lineTo(0, size.height - 30);
+    path.quadraticBezierTo(size.width / 4, size.height, size.width / 2, size.height - 20);
+    path.quadraticBezierTo(3 * size.width / 4, size.height - 40, size.width, size.height - 10);
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
   }
 }
 
@@ -157,7 +302,7 @@ class MovieCard extends StatelessWidget {
         onTap: onTap,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.network(
+          child: Image.asset(
             imageUrl,
             width: 150,
             height: 220,
@@ -176,15 +321,15 @@ class MovieDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("The Rose"),
+        title: Text("Detalhes do Filme"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Imagem principal
-            Image.network(
-              'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFeqJdje8V8uXkpL4AQsbcNO3317Yp1C_kB6rN2JOlIsEkHlMHRENiTiVAYA7T9QNXmpShKK0F9zvYdSf5AN9A0BLhyphenhyphenk_KWZFlqxmduiQWyIGDll7AbOBS6s16oOnuBSFuhFmO1PfbN3Wg/s1600/The+Rose.jpg',
+            // Imagem principal do filme
+            Image.asset(
+              'assets/images/blackrose_icon.jpg',
               width: double.infinity,
               height: 300,
               fit: BoxFit.cover,
@@ -192,7 +337,7 @@ class MovieDetailPage extends StatelessWidget {
             SizedBox(height: 20),
             // Descrição do filme
             Text(
-              'The Rose é um filme de drama musical que foi lançado em 1979. A história segue uma cantora...',
+              'The Rose é um filme de drama musical que foi lançado em 1979...',
               style: TextStyle(color: Colors.white, fontSize: 18),
               textAlign: TextAlign.justify,
             ),
