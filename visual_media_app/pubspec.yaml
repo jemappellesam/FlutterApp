@@ -26,10 +26,25 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/blackrose_icon.jpg  # O caminho da sua imagem de ícone
+    - assets/images/blackrose_icon.jpg 
+    - assets/images/perfil_bruno.jpg
+    - assets/images/perfil_matheus.jpg
+    - assets/images/perfil_luiz.jpg
+    - assets/images/perfil_julio.jpg
+    - assets/images/perfil_yurik.jpg
+    - assets/images/perfil_samuel.jpg
+    - assets/images/filme_1.jpg
+    - assets/images/filme_2.jpg
+    - assets/images/filme_3.jpg
+    - assets/images/filme_4.jpg
+    - assets/images/filme_5.jpg
+    - assets/images/filme_6.jpg
+    - assets/images/continua_assistindo_1.jpg
+    - assets/images/continua_assistindo_2.jpg
+    - assets/images/continua_assistindo_3.jpg
 
 # Configuração para gerar ícones personalizados
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/blackrose_icon.jpg"  # Caminho da imagem do ícone
+  image_path: "assets/images/blackrose_icon.jpg"  

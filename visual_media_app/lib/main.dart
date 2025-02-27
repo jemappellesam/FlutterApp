@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());
@@ -111,7 +111,9 @@ class ProfileSelectionPage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => StreamingHomePage(),
+                              builder: (context) => StreamingHomePage(
+                                profileImage: _getProfileImage(index), // Passa a imagem do perfil
+                              ),
                             ),
                           );
                         },
@@ -119,7 +121,7 @@ class ProfileSelectionPage extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 50,
-                              backgroundImage: AssetImage('assets/images/blackrose_icon.jpg'),
+                              backgroundImage: AssetImage(_getProfileImage(index)), // Exibe a imagem correta
                             ),
                             SizedBox(height: 10),
                             Text(
@@ -148,13 +150,45 @@ class ProfileSelectionPage extends StatelessWidget {
     List<String> profiles = ['Samuel', 'Yurik', 'Julio', 'Matheus', 'Bruno', 'Luiz'];
     return profiles[index];
   }
+
+  String _getProfileImage(int index) {
+    // Aqui você mapeia o perfil com a imagem correspondente
+    List<String> profileImages = [
+      'assets/images/perfil_samuel.jpg',
+      'assets/images/perfil_yurik.jpg',
+      'assets/images/perfil_julio.jpg',
+      'assets/images/perfil_matheus.jpg',
+      'assets/images/perfil_bruno.jpg',
+      'assets/images/perfil_luiz.jpg',
+    ];
+    return profileImages[index];
+  }
 }
 
 class StreamingHomePage extends StatelessWidget {
-  const StreamingHomePage({super.key});
+  final String profileImage; // Recebe a imagem do perfil
+
+  const StreamingHomePage({super.key, required this.profileImage});
 
   @override
   Widget build(BuildContext context) {
+    // Lista de imagens para o carrossel
+    List<String> carouselImages = [
+      'assets/images/filme_1.jpg',
+      'assets/images/filme_2.jpg',
+      'assets/images/filme_3.jpg',
+      'assets/images/filme_4.jpg',
+      'assets/images/filme_5.jpg',
+      'assets/images/filme_6.jpg'
+    ];
+
+    // Lista de imagens para a seção "Continue assistindo"
+    List<String> continueWatchingImages = [
+      'assets/images/continua_assistindo_1.jpg',
+      'assets/images/continua_assistindo_2.jpg',
+      'assets/images/continua_assistindo_3.jpg',
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text("The Rosarium"),
@@ -202,14 +236,14 @@ class StreamingHomePage extends StatelessWidget {
                   height: 250,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 5, // número de imagens no carrossel
+                    itemCount: carouselImages.length, // número de imagens no carrossel
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 16.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.asset(
-                            'assets/images/blackrose_icon.jpg', // Imagem do asset
+                            carouselImages[index], // Imagem do asset
                             width: 200,
                             height: 250,
                             fit: BoxFit.cover,
@@ -236,7 +270,7 @@ class StreamingHomePage extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     children: [
                       MovieCard(
-                        imageUrl: 'assets/images/blackrose_icon.jpg',
+                        imageUrl: continueWatchingImages[0],
                         onTap: () {
                           Navigator.push(
                             context,
@@ -247,7 +281,18 @@ class StreamingHomePage extends StatelessWidget {
                         },
                       ),
                       MovieCard(
-                        imageUrl: 'assets/images/blackrose_icon.jpg', // Outra imagem do asset
+                        imageUrl: continueWatchingImages[1],
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MovieDetailPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      MovieCard(
+                        imageUrl: continueWatchingImages[2],
                         onTap: () {
                           Navigator.push(
                             context,
