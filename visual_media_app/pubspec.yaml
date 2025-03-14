@@ -10,8 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^6.0.0
+  google_fonts: ^4.0.3
 
-  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
@@ -47,4 +48,4 @@ flutter:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/blackrose_icon.jpg"  
+  image_path: "assets/images/blackrose_icon.jpg"
