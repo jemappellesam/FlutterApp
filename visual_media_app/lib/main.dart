@@ -119,9 +119,9 @@ class ProfileSelectionPage extends StatelessWidget {
                         },
                         child: Column(
                           children: [
-                            CircleAvatar(
+                            AnimatedProfileBorder(
+                              imageUrl: _getProfileImage(index),
                               radius: 50,
-                              backgroundImage: AssetImage(_getProfileImage(index)), // Exibe a imagem correta
                             ),
                             SizedBox(height: 10),
                             Text(
@@ -152,7 +152,6 @@ class ProfileSelectionPage extends StatelessWidget {
   }
 
   String _getProfileImage(int index) {
-    // Aqui você mapeia o perfil com a imagem correspondente
     List<String> profileImages = [
       'assets/images/perfil_samuel.jpg',
       'assets/images/perfil_yurik.jpg',
@@ -373,12 +372,12 @@ class MovieDetailPage extends StatelessWidget {
     ];
 
     List<String> movieDescriptions = [
-      'Descrição do Filme 1...',
-      'Descrição do Filme 2...',
-      'Descrição do Filme 3...',
-      'Descrição do Filme 4...',
-      'Descrição do Filme 5...',
-      'Descrição do Filme 6...',
+      'Mike sente uma grande necessidade de encontrar sua mãe, então ele e Scott partem para o Idaho para visitar o irmão mais velho de Mike, Richard. Durante essa jornada, Mike confessa a Scott que está apaixonado por ele.',
+      'Uma história audaciosa de dois colegas de quarto, um homem gay e outra uma mulher heterossexual. Através dos olhos de Mi Ae começa a desajeitada história de amor de Go Yeong. Histórias de risos, lágrimas e feridas entre uma mãe que nega a sexualidade de seu filho e sua incapacidade de escapar do julgamento social.',
+      'Love in the Big City é um filme de 2024 que conta a história de Jae-hee e Heung-soo, dois jovens que se aproximam e se mudam juntos. O filme é baseado no livro de mesmo nome de Park Sang Young. ',
+      'Durante uma festa de aniversário em 1968, um convidado surpresa e uma brincadeira regada a álcool fazem 7 amigos  refletirem sobre verdades e sentimentos escondidos.',
+      'Na ilha grega de Kalokairi, Sophie (Amanda Seyfried) está prestes a se casar e, sem saber quem é seu pai, envia convites para Sam Carmichael (Pierce Brosnan), Harry Bright (Colin Firth) e Bill Anderson (Stellan Skarsgard). Eles vêm de diferentes partes do mundo, dispostos a reencontrar a mulher de suas vidas: Donna (Meryl Streep), mãe de Sophie. Ao chegarem Donna é surpreendida, tendo que inventar desculpas para não revelar quem é o pai de Sophie.',
+      'No início da década de 1970, o Brasil enfrenta o endurecimento da ditadura militar. No Rio de Janeiro, a família Paiva - Rubens, Eunice e seus cinco filhos - vive à beira da praia em uma casa de portas abertas para os amigos. Um dia, Rubens Paiva é levado por militares à paisana e desaparece. Eunice - cuja busca pela verdade sobre o destino de seu marido se estenderia por décadas - é obrigada a se reinventar e traçar um novo futuro para si e seus filhos.',
     ];
 
     return Scaffold(
@@ -574,5 +573,78 @@ class WaveClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) {
     return false;
+  }
+}
+
+class AnimatedProfileBorder extends StatefulWidget {
+  final String imageUrl;
+  final double radius;
+
+  const AnimatedProfileBorder({
+    super.key,
+    required this.imageUrl,
+    this.radius = 50,
+  });
+
+  @override
+  _AnimatedProfileBorderState createState() => _AnimatedProfileBorderState();
+}
+
+class _AnimatedProfileBorderState extends State<AnimatedProfileBorder>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation1;
+  late Animation<Color?> _colorAnimation2;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 2),
+    )..repeat(reverse: true);
+
+    _colorAnimation1 = ColorTween(
+      begin: Color(0xFF6200EA), // Roxo vibrante
+      end: Color(0xFF03DAC6), // Ciano brilhante
+    ).animate(_controller);
+
+    _colorAnimation2 = ColorTween(
+      begin: Color(0xFFBB86FC), // Roxo claro
+      end: Color(0xFF018786), // Verde-água escuro
+    ).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Container(
+          padding: EdgeInsets.all(4), // Espaço para o gradiente
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: [
+                _colorAnimation1.value!,
+                _colorAnimation2.value!,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: CircleAvatar(
+            radius: widget.radius,
+            backgroundImage: AssetImage(widget.imageUrl),
+          ),
+        );
+      },
+    );
   }
 }
