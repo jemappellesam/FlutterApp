@@ -119,7 +119,8 @@ class ProfileSelectionPage extends StatelessWidget {
                         },
                         child: Column(
                           children: [
-                            CircleAvatar(radius: 50,
+                            CircleAvatar(
+                              radius: 50,
                               backgroundImage: AssetImage(_getProfileImage(index)), // Exibe a imagem correta
                             ),
                             SizedBox(height: 10),
@@ -255,7 +256,7 @@ class _StreamingHomePageState extends State<StreamingHomePage>
                 end: Alignment.bottomCenter,
                 colors: [
                   Color(0xFF6200EA), // Roxo vibrante
-                  Color(0xFF121212), 
+                  Color(0xFF121212), // Fundo escuro
                 ],
               ),
             ),
@@ -482,6 +483,8 @@ class MovieProvider with ChangeNotifier {
 }
 
 class PlayIconAnimation extends StatefulWidget {
+  const PlayIconAnimation({super.key});
+
   @override
   _PlayIconAnimationState createState() => _PlayIconAnimationState();
 }
@@ -503,7 +506,8 @@ class _PlayIconAnimationState extends State<PlayIconAnimation>
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.5).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
-_colorAnimation = ColorTween(
+
+    _colorAnimation = ColorTween(
   begin: const Color.fromARGB(255, 11, 0, 32).withOpacity(0.8), // Roxo escuro
   end: const Color.fromARGB(255, 52, 46, 129).withOpacity(0.8), // Roxo médio
 ).animate(_controller);
