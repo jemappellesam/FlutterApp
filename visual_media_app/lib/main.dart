@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart'; 
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => MovieProvider(),
-      child: MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -19,15 +13,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'The Rosarium',
       theme: ThemeData(
-        primaryColor: Color(0xFF6200EA), // Roxo vibrante
-        scaffoldBackgroundColor: Color(0xFF121212), // Fundo escuro moderno
-        textTheme: GoogleFonts.robotoTextTheme(
-          Theme.of(context).textTheme,
-        ),
+        primaryColor: const Color(0xFF6200EA),
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme),
         appBarTheme: AppBarTheme(
           color: Colors.transparent,
           elevation: 0,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
           titleTextStyle: GoogleFonts.poppins(
             color: Colors.white,
             fontSize: 30,
@@ -35,7 +27,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: ProfileSelectionPage(),
+      home: const ProfileSelectionPage(),
     );
   }
 }
@@ -45,91 +37,77 @@ class ProfileSelectionPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final avatarRadius = (screenWidth / 3 - 32) / 2;
+
     return Scaffold(
       body: Stack(
         children: [
-          // Gradiente de fundo
           Container(
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF6200EA), // Roxo vibrante
-                  Color(0xFF121212), // Fundo escuro
-                ],
-              ),
-            ),
-          ),
-          // Efeito de vidro fosco no topo
-          ClipPath(
-            clipper: WaveClipper(),
-            child: Container(
-              height: MediaQuery.of(context).size.height / 2,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF6200EA).withOpacity(0.8),
-                    Color(0xFF121212).withOpacity(0.8),
-                  ],
-                ),
+                colors: [Color(0xFF6200EA), Color(0xFF121212)],
               ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Título "Quem está assistindo?"
                 Text(
                   "Quem está assistindo?",
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                    fontSize: 30,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 20),
-                // Lista de Perfis
+                const SizedBox(height: 16),
                 Expanded(
                   child: GridView.builder(
+                    padding: const EdgeInsets.only(bottom: 16),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 1,
+                      childAspectRatio: 0.8,
                     ),
-                    itemCount: 6, // 6 perfis
+                    itemCount: 6,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
-                          // Navega para a tela de streaming ao clicar no perfil
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => StreamingHomePage(
-                                profileImage: _getProfileImage(index), // Passa a imagem do perfil
+                                profileImage: _getProfileImage(index),
                               ),
                             ),
                           );
                         },
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             AnimatedProfileBorder(
                               imageUrl: _getProfileImage(index),
-                              radius: 50,
+                              radius: avatarRadius,
                             ),
-                            SizedBox(height: 10),
-                            Text(
-                              _getProfileName(index),
-                              style: GoogleFonts.roboto(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              child: Text(
+                                _getProfileName(index),
+                                style: GoogleFonts.roboto(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ],
@@ -166,15 +144,12 @@ class ProfileSelectionPage extends StatelessWidget {
 
 class StreamingHomePage extends StatefulWidget {
   final String profileImage;
-
   const StreamingHomePage({super.key, required this.profileImage});
-
   @override
   _StreamingHomePageState createState() => _StreamingHomePageState();
 }
 
-class _StreamingHomePageState extends State<StreamingHomePage>
-    with SingleTickerProviderStateMixin {
+class _StreamingHomePageState extends State<StreamingHomePage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Color?> _colorAnimation1;
   late Animation<Color?> _colorAnimation2;
@@ -182,21 +157,9 @@ class _StreamingHomePageState extends State<StreamingHomePage>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 2), // Duração reduzida para 2 segundos
-    )..repeat(reverse: true);
-
-    // Cores mais contrastantes
-    _colorAnimation1 = ColorTween(
-      begin: Color(0xFF6200EA), // Roxo vibrante
-      end: Color(0xFF03DAC6), // Ciano brilhante
-    ).animate(_controller);
-
-    _colorAnimation2 = ColorTween(
-      begin: Color(0xFFBB86FC), // Roxo claro
-      end: Color(0xFF018786), // Verde-água escuro
-    ).animate(_controller);
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
+    _colorAnimation1 = ColorTween(begin: const Color(0xFF6200EA), end: const Color(0xFF03DAC6)).animate(_controller);
+    _colorAnimation2 = ColorTween(begin: const Color(0xFFBB86FC), end: const Color(0xFF018786)).animate(_controller);
   }
 
   @override
@@ -224,20 +187,17 @@ class _StreamingHomePageState extends State<StreamingHomePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("The Rosarium"),
-        leading: Icon(Icons.menu),
+        title: const Text("The Rosarium"),
+        leading: const Icon(Icons.menu),
         flexibleSpace: AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
             return Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
+                  colors: [_colorAnimation1.value!, _colorAnimation2.value!],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    _colorAnimation1.value!,
-                    _colorAnimation2.value!,
-                  ],
                 ),
               ),
             );
@@ -246,33 +206,28 @@ class _StreamingHomePageState extends State<StreamingHomePage>
       ),
       body: Stack(
         children: [
-          // Gradiente de fundo
           Container(
             height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
+                colors: [Color(0xFF6200EA), Color(0xFF121212)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF6200EA), // Roxo vibrante
-                  Color(0xFF121212), // Fundo escuro
-                ],
               ),
             ),
           ),
-          // Efeito de vidro fosco no topo
           ClipPath(
             clipper: WaveClipper(),
             child: Container(
               height: MediaQuery.of(context).size.height / 2,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF6200EA).withOpacity(0.8),
+                    const Color(0xFF121212).withOpacity(0.8)
+                  ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF6200EA).withOpacity(0.8),
-                    Color(0xFF121212).withOpacity(0.8),
-                  ],
                 ),
               ),
             ),
@@ -282,31 +237,26 @@ class _StreamingHomePageState extends State<StreamingHomePage>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Carrossel de Imagens
                 SizedBox(
                   height: 250,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: carouselImages.length, // número de imagens no carrossel
+                    itemCount: carouselImages.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 16.0),
                         child: GestureDetector(
                           onTap: () {
-                            // Navega para a tela de detalhes do filme
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MovieDetailPage(
-                                  movieIndex: index,
-                                ),
-                              ),
-                            );
+                                builder: (context) => MovieDetailPage(movieIndex: index),
+                            ));
                           },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: Image.asset(
-                              carouselImages[index], // Imagem do asset
+                              carouselImages[index],
                               width: 200,
                               height: 250,
                               fit: BoxFit.cover,
@@ -317,8 +267,7 @@ class _StreamingHomePageState extends State<StreamingHomePage>
                     },
                   ),
                 ),
-                SizedBox(height: 20),
-                // Título da seção alterado
+                const SizedBox(height: 20),
                 Text(
                   'Continue assistindo',
                   style: GoogleFonts.poppins(
@@ -327,21 +276,15 @@ class _StreamingHomePageState extends State<StreamingHomePage>
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: 10),
-                // Lista horizontal de filmes e séries
-                Expanded(
+                const SizedBox(height: 10),
+                SizedBox(
+                  height: 200,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: [
-                      MovieCard(
-                        imageUrl: continueWatchingImages[0],
-                      ),
-                      MovieCard(
-                        imageUrl: continueWatchingImages[1],
-                      ),
-                      MovieCard(
-                        imageUrl: continueWatchingImages[2],
-                      ),
+                      MovieCard(imageUrl: continueWatchingImages[0], height: 180),
+                      MovieCard(imageUrl: continueWatchingImages[1], height: 180),
+                      MovieCard(imageUrl: continueWatchingImages[2], height: 180),
                     ],
                   ),
                 ),
@@ -354,14 +297,86 @@ class _StreamingHomePageState extends State<StreamingHomePage>
   }
 }
 
-class MovieDetailPage extends StatelessWidget {
-  final int movieIndex;
-
-  const MovieDetailPage({super.key, required this.movieIndex});
+class MovieCard extends StatelessWidget {
+  final String imageUrl;
+  final double height;
+  const MovieCard({super.key, required this.imageUrl, this.height = 180});
 
   @override
   Widget build(BuildContext context) {
-    final movieProvider = Provider.of<MovieProvider>(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: 120,
+          height: height,
+          decoration: BoxDecoration(
+            image: DecorationImage(image: AssetImage(imageUrl), fit: BoxFit.cover),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                spreadRadius: 2,
+                blurRadius: 5,
+              )
+            ],
+          ),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 3,
+              color: Colors.white.withOpacity(0.3),
+              child: LinearProgressIndicator(
+                value: 0.6,
+                backgroundColor: Colors.transparent,
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MovieDetailPage extends StatefulWidget {
+  final int movieIndex;
+  const MovieDetailPage({super.key, required this.movieIndex});
+  @override
+  State<MovieDetailPage> createState() => _MovieDetailPageState();
+}
+
+class _MovieDetailPageState extends State<MovieDetailPage> {
+  final Map<int, bool> _likedMovies = {};
+  final Map<int, bool> _dislikedMovies = {};
+
+  void toggleLike(int movieIndex) {
+    setState(() {
+      if (_likedMovies[movieIndex] == true) {
+        _likedMovies[movieIndex] = false;
+      } else {
+        _likedMovies[movieIndex] = true;
+        _dislikedMovies[movieIndex] = false;
+      }
+    });
+  }
+
+  void toggleDislike(int movieIndex) {
+    setState(() {
+      if (_dislikedMovies[movieIndex] == true) {
+        _dislikedMovies[movieIndex] = false;
+      } else {
+        _dislikedMovies[movieIndex] = true;
+        _likedMovies[movieIndex] = false;
+      }
+    });
+  }
+
+  bool isLiked(int movieIndex) => _likedMovies[movieIndex] ?? false;
+  bool isDisliked(int movieIndex) => _dislikedMovies[movieIndex] ?? false;
+
+  @override
+  Widget build(BuildContext context) {
     List<String> carouselImages = [
       'assets/images/filme_1.jpg',
       'assets/images/filme_2.jpg',
@@ -372,75 +387,63 @@ class MovieDetailPage extends StatelessWidget {
     ];
 
     List<String> movieDescriptions = [
-      'Mike sente uma grande necessidade de encontrar sua mãe, então ele e Scott partem para o Idaho para visitar o irmão mais velho de Mike, Richard. Durante essa jornada, Mike confessa a Scott que está apaixonado por ele.',
-      'Uma história audaciosa de dois colegas de quarto, um homem gay e outra uma mulher heterossexual. Através dos olhos de Mi Ae começa a desajeitada história de amor de Go Yeong. Histórias de risos, lágrimas e feridas entre uma mãe que nega a sexualidade de seu filho e sua incapacidade de escapar do julgamento social.',
-      'Love in the Big City é um filme de 2024 que conta a história de Jae-hee e Heung-soo, dois jovens que se aproximam e se mudam juntos. O filme é baseado no livro de mesmo nome de Park Sang Young. ',
-      'Durante uma festa de aniversário em 1968, um convidado surpresa e uma brincadeira regada a álcool fazem 7 amigos  refletirem sobre verdades e sentimentos escondidos.',
-      'Na ilha grega de Kalokairi, Sophie (Amanda Seyfried) está prestes a se casar e, sem saber quem é seu pai, envia convites para Sam Carmichael (Pierce Brosnan), Harry Bright (Colin Firth) e Bill Anderson (Stellan Skarsgard). Eles vêm de diferentes partes do mundo, dispostos a reencontrar a mulher de suas vidas: Donna (Meryl Streep), mãe de Sophie. Ao chegarem Donna é surpreendida, tendo que inventar desculpas para não revelar quem é o pai de Sophie.',
-      'No início da década de 1970, o Brasil enfrenta o endurecimento da ditadura militar. No Rio de Janeiro, a família Paiva - Rubens, Eunice e seus cinco filhos - vive à beira da praia em uma casa de portas abertas para os amigos. Um dia, Rubens Paiva é levado por militares à paisana e desaparece. Eunice - cuja busca pela verdade sobre o destino de seu marido se estenderia por décadas - é obrigada a se reinventar e traçar um novo futuro para si e seus filhos.',
+      'Mike sente uma grande necessidade de encontrar sua mãe...',
+      'Uma história audaciosa de dois colegas de quarto...',
+      'Love in the Big City é um filme de 2024...',
+      'Durante uma festa de aniversário em 1968...',
+      'Na ilha grega de Kalokairi, Sophie...',
+      'No início da década de 1970...'
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Detalhes do Filme"),
-      ),
+      appBar: AppBar(title: const Text("Detalhes do Filme")),
       body: Stack(
         children: [
           Container(
             height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
+                colors: [Color(0xFF1A237E), Color(0xFF0D1B2A)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF1A237E), // Azul escuro
-                  Color(0xFF0D1B2A), // Roxo escuro
-                ],
               ),
             ),
           ),
           Column(
             children: [
-              // Imagem do filme ocupando o topo da tela
               Container(
                 height: MediaQuery.of(context).size.height * 0.4,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(carouselImages[movieIndex]),
+                    image: AssetImage(carouselImages[widget.movieIndex]),
                     fit: BoxFit.cover,
                   ),
                 ),
-                child: Center(
-                  child: PlayIconAnimation(),
-                ),
+                child: const Center(child: PlayIconAnimation()),
               ),
-              SizedBox(height: 20),
-              // Descrição do filme
+              const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
-                  movieDescriptions[movieIndex],
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  movieDescriptions[widget.movieIndex],
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
                 ),
               ),
-              SizedBox(height: 10),
-              // Botões de like/dislike
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
                     icon: Icon(
                       Icons.thumb_up,
-                      color: movieProvider.isLiked(movieIndex) ? Colors.green : Colors.white,
-                    ),
-                    onPressed: () => movieProvider.toggleLike(movieIndex),
+                      color: isLiked(widget.movieIndex) ? Colors.green : Colors.white),
+                    onPressed: () => toggleLike(widget.movieIndex),
                   ),
                   IconButton(
                     icon: Icon(
                       Icons.thumb_down,
-                      color: movieProvider.isDisliked(movieIndex) ? Colors.red : Colors.white,
-                    ),
-                    onPressed: () => movieProvider.toggleDislike(movieIndex),
+                      color: isDisliked(widget.movieIndex) ? Colors.red : Colors.white),
+                    onPressed: () => toggleDislike(widget.movieIndex),
                   ),
                 ],
               ),
@@ -452,44 +455,13 @@ class MovieDetailPage extends StatelessWidget {
   }
 }
 
-class MovieProvider with ChangeNotifier {
-  // Mapa para armazenar o estado de like/dislike de cada filme
-  final Map<int, bool> _likedMovies = {};
-  final Map<int, bool> _dislikedMovies = {};
-
-  bool isLiked(int movieIndex) => _likedMovies[movieIndex] ?? false;
-  bool isDisliked(int movieIndex) => _dislikedMovies[movieIndex] ?? false;
-
-  void toggleLike(int movieIndex) {
-    if (_likedMovies[movieIndex] == true) {
-      _likedMovies[movieIndex] = false;
-    } else {
-      _likedMovies[movieIndex] = true;
-      _dislikedMovies[movieIndex] = false; // Desativa dislike se like for ativado
-    }
-    notifyListeners();
-  }
-
-  void toggleDislike(int movieIndex) {
-    if (_dislikedMovies[movieIndex] == true) {
-      _dislikedMovies[movieIndex] = false;
-    } else {
-      _dislikedMovies[movieIndex] = true;
-      _likedMovies[movieIndex] = false; // Desativa like se dislike for ativado
-    }
-    notifyListeners();
-  }
-}
-
 class PlayIconAnimation extends StatefulWidget {
   const PlayIconAnimation({super.key});
-
   @override
   _PlayIconAnimationState createState() => _PlayIconAnimationState();
 }
 
-class _PlayIconAnimationState extends State<PlayIconAnimation>
-    with SingleTickerProviderStateMixin {
+class _PlayIconAnimationState extends State<PlayIconAnimation> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<Color?> _colorAnimation;
@@ -499,17 +471,15 @@ class _PlayIconAnimationState extends State<PlayIconAnimation>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 999),
+      duration: const Duration(milliseconds: 999),
     );
-
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.5).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
-
     _colorAnimation = ColorTween(
-  begin: const Color.fromARGB(255, 11, 0, 32).withOpacity(0.8), // Roxo escuro
-  end: const Color.fromARGB(255, 52, 46, 129).withOpacity(0.8), // Roxo médio
-).animate(_controller);
+      begin: const Color.fromARGB(255, 11, 0, 32).withOpacity(0.8),
+      end: const Color.fromARGB(255, 52, 46, 129).withOpacity(0.8),
+    ).animate(_controller);
   }
 
   @override
@@ -535,28 +505,6 @@ class _PlayIconAnimationState extends State<PlayIconAnimation>
   }
 }
 
-class MovieCard extends StatelessWidget {
-  final String imageUrl;
-
-  const MovieCard({super.key, required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.asset(
-          imageUrl,
-          width: 150,
-          height: 220,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-}
-
 class WaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
@@ -571,27 +519,18 @@ class WaveClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
-  }
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
 
 class AnimatedProfileBorder extends StatefulWidget {
   final String imageUrl;
   final double radius;
-
-  const AnimatedProfileBorder({
-    super.key,
-    required this.imageUrl,
-    this.radius = 50,
-  });
-
+  const AnimatedProfileBorder({super.key, required this.imageUrl, this.radius = 50});
   @override
   _AnimatedProfileBorderState createState() => _AnimatedProfileBorderState();
 }
 
-class _AnimatedProfileBorderState extends State<AnimatedProfileBorder>
-    with SingleTickerProviderStateMixin {
+class _AnimatedProfileBorderState extends State<AnimatedProfileBorder> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Color?> _colorAnimation1;
   late Animation<Color?> _colorAnimation2;
@@ -599,20 +538,9 @@ class _AnimatedProfileBorderState extends State<AnimatedProfileBorder>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 2),
-    )..repeat(reverse: true);
-
-    _colorAnimation1 = ColorTween(
-      begin: Color(0xFF6200EA), // Roxo vibrante
-      end: Color(0xFF03DAC6), // Ciano brilhante
-    ).animate(_controller);
-
-    _colorAnimation2 = ColorTween(
-      begin: Color(0xFFBB86FC), // Roxo claro
-      end: Color(0xFF018786), // Verde-água escuro
-    ).animate(_controller);
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat(reverse: true);
+    _colorAnimation1 = ColorTween(begin: const Color(0xFF6200EA), end: const Color(0xFF03DAC6)).animate(_controller);
+    _colorAnimation2 = ColorTween(begin: const Color(0xFFBB86FC), end: const Color(0xFF018786)).animate(_controller);
   }
 
   @override
@@ -627,14 +555,11 @@ class _AnimatedProfileBorderState extends State<AnimatedProfileBorder>
       animation: _controller,
       builder: (context, child) {
         return Container(
-          padding: EdgeInsets.all(4), // Espaço para o gradiente
+          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
-              colors: [
-                _colorAnimation1.value!,
-                _colorAnimation2.value!,
-              ],
+              colors: [_colorAnimation1.value!, _colorAnimation2.value!],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
